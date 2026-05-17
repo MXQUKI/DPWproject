@@ -1,0 +1,16 @@
+{
+  "validation_year": 2017,
+  "training_rows": 7299,
+  "validation_rows": 93,
+  "genres_evaluated": 13,
+  "overall_mae": 86789039.41,
+  "overall_rmse": 161841120.82,
+  "overall_mape_percent": 51747.58,
+  "overall_wape_percent": 54.63,
+  "overall_r_squared": 0.6431,
+  "actual_total_revenue": 14774998526.0,
+  "predicted_total_revenue": 11222433117.75,
+  "validation_start": "2017-01-03",
+  "validation_end": "2017-07-28",
+  "cutoff_date": "2017-07-31"
+}
