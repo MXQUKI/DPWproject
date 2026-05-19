@@ -161,32 +161,16 @@ def apply_filters(df: pd.DataFrame, filters: Optional[Dict[str, object]] = None)
     keyword = filters.get("keyword") or filters.get("keywords") or filters.get("title_keyword")
     if keyword:
         keyword = str(keyword).strip()
-        title_exact_mask = pd.Series(False, index=filtered.index)
-        title_prefix_mask = pd.Series(False, index=filtered.index)
         title_phrase_mask = pd.Series(False, index=filtered.index)
-        keyword_exact_mask = pd.Series(False, index=filtered.index)
         keyword_phrase_mask = pd.Series(False, index=filtered.index)
 
         if COL_TITLE in filtered.columns:
-            title_exact_mask = filtered[COL_TITLE].map(lambda value: _search_text_equals(value, keyword))
-            title_prefix_mask = filtered[COL_TITLE].map(lambda value: _search_text_startswith(value, keyword))
             title_phrase_mask = filtered[COL_TITLE].map(lambda value: _search_text_matches(value, keyword))
 
         if COL_KEYWORD in filtered.columns:
-            keyword_exact_mask = filtered[COL_KEYWORD].map(lambda value: _keyword_token_exact_match(value, keyword))
             keyword_phrase_mask = filtered[COL_KEYWORD].map(lambda value: _keyword_token_match(value, keyword))
 
-        if title_exact_mask.any():
-            combined_mask = title_exact_mask
-        elif title_prefix_mask.any():
-            combined_mask = title_prefix_mask
-        elif title_phrase_mask.any():
-            combined_mask = title_phrase_mask
-        elif keyword_exact_mask.any():
-            combined_mask = keyword_exact_mask
-        else:
-            combined_mask = keyword_phrase_mask
-
+        combined_mask = title_phrase_mask | keyword_phrase_mask
         filtered = filtered.loc[combined_mask]
 
     return filtered.reset_index(drop=True)

@@ -186,6 +186,13 @@ From the UI you can:
 - click `Reset` to clear filters
 - click `Refresh Charts` to rebuild charts for the current selection
 
+Notes:
+
+- regular charts can be rebuilt from the current filtered selection
+- `Yearly Forecast vs Actual` and `Multi-Model Forecast Lines` are fixed forecast charts
+- both fixed forecast charts always use the full cleaned dataset
+- they do not change with filters and do not need refreshing
+
 ### 3. Regenerate Only the Cleaned Dataset
 
 If the raw Kaggle dataset is already available and you only want to rebuild the cleaned file:

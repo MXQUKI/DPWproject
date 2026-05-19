@@ -1,16 +1,29 @@
 {
+  "model_name": "ridge",
+  "model_label": "Ridge Regression",
   "validation_year": 2017,
   "training_rows": 7299,
   "validation_rows": 93,
   "genres_evaluated": 13,
-  "overall_mae": 86789039.41,
-  "overall_rmse": 161841120.82,
-  "overall_mape_percent": 51747.58,
-  "overall_wape_percent": 54.63,
-  "overall_r_squared": 0.6431,
+  "overall_mae": 86767069.79,
+  "overall_rmse": 161806463.42,
+  "overall_mape_percent": 51911.08,
+  "overall_wape_percent": 54.61,
+  "overall_r_squared": 0.6432,
   "actual_total_revenue": 14774998526.0,
-  "predicted_total_revenue": 11222433117.75,
+  "predicted_total_revenue": 11236719176.25,
   "validation_start": "2017-01-03",
   "validation_end": "2017-07-28",
-  "cutoff_date": "2017-07-31"
+  "cutoff_date": "2017-07-31",
+  "cache_metadata": {
+    "version": 1,
+    "dataset_path": "/Users/m/Desktop/DPW project/DPWproject/cleaned_imdb_movies.csv",
+    "dataset_size": 8897681,
+    "dataset_mtime_ns": 1778998749923424994,
+    "cutoff_date": "2017-07-31",
+    "validation_year": 2017,
+    "min_train_rows": 12,
+    "alpha": 8.0,
+    "model_name": "ridge"
+  }
 }

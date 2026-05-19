@@ -44,8 +44,12 @@
 - `yearly_rating_trend.png`
 - `budget_revenue_scatter.png`
 - `forecast_backtest_yearly_comparison.png`
+- `forecast_model_backtest_comparison.png`
 
-其中最后一张预测图是固定图，展示 `2003-2017` 各验证年份的“预测总票房 vs 实际总票房”。
+其中后两张预测图都是固定图：
+
+- `forecast_backtest_yearly_comparison.png` 展示 `2003-2017` 各验证年份的“预测总票房 vs 实际总票房”
+- `forecast_model_backtest_comparison.png` 展示多模型预测与实际票房的年度折线对比
 
 ### 4. 高级分析
 
@@ -207,9 +211,9 @@
 说明：
 
 - 普通图表可以基于当前筛选结果重建
-- `Yearly Forecast vs Actual` 是固定图
-- 这张固定预测图始终基于完整清洗数据展示
-- 它不随筛选结果变化，也不需要刷新
+- `Yearly Forecast vs Actual` 和 `Multi-Model Forecast Lines` 都是固定图
+- 这两张固定预测图始终基于完整清洗数据展示
+- 它们不随筛选结果变化，也不需要刷新
 
 ### 3. 单独重建清洗文件
 

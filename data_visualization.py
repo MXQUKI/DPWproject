@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
@@ -26,11 +27,263 @@ import numpy as np
 import pandas as pd
 from matplotlib.ticker import FuncFormatter
 
-from box_office_forecasting import backtest_genre_revenue_models
+from box_office_forecasting import (
+    FORECAST_MODEL_LABELS,
+    FORECAST_SUPPORTED_MODELS,
+    backtest_multiple_forecast_models,
+)
 from data_analysis import aggregate_by_genre, yearly_rating_trend
 
 FORECAST_YEAR_SELECTION_START = 2003
 FORECAST_YEAR_SELECTION_END = 2017
+FORECAST_BACKTEST_OVERVIEW_FILENAME = "forecast_backtest_yearly_overview.csv"
+FORECAST_BACKTEST_METADATA_FILENAME = "forecast_backtest_metadata.json"
+FORECAST_MULTI_MODEL_OVERVIEW_FILENAME = "forecast_model_backtest_yearly_overview.csv"
+FORECAST_MULTI_MODEL_SUMMARY_FILENAME = "forecast_model_backtest_summary.csv"
+FORECAST_MULTI_MODEL_METADATA_FILENAME = "forecast_model_backtest_metadata.json"
+FORECAST_CACHE_SIGNATURE_COLUMNS = (
+    "id",
+    "source_id",
+    "title",
+    "primary_genre",
+    "budget",
+    "revenue",
+    "runtime",
+    "release_date",
+    "language",
+    "country",
+)
+
+
+def _build_forecast_cache_signature(df: pd.DataFrame) -> Dict[str, object]:
+    relevant_columns = [column for column in FORECAST_CACHE_SIGNATURE_COLUMNS if column in df.columns]
+    if not relevant_columns:
+        return {
+            "row_count": int(len(df)),
+            "columns": [],
+            "fingerprint": "0",
+        }
+
+    working = df[relevant_columns].copy()
+    normalized = pd.DataFrame(index=working.index)
+    for column in relevant_columns:
+        series = working[column]
+        if column == "release_date":
+            normalized[column] = pd.to_datetime(series, errors="coerce").dt.strftime("%Y-%m-%d").fillna("")
+        elif pd.api.types.is_numeric_dtype(series):
+            normalized[column] = pd.to_numeric(series, errors="coerce").fillna(-1.0)
+        else:
+            normalized[column] = series.astype("string").fillna("").str.strip()
+
+    sort_columns = [column for column in ("id", "source_id", "release_date", "title", "primary_genre") if column in normalized.columns]
+    if sort_columns:
+        normalized = normalized.sort_values(sort_columns, kind="mergesort").reset_index(drop=True)
+
+    fingerprint = int(pd.util.hash_pandas_object(normalized, index=False).astype("uint64").sum())
+    return {
+        "row_count": int(len(normalized)),
+        "columns": relevant_columns,
+        "fingerprint": str(fingerprint),
+    }
+
+
+def _load_cached_forecast_frames(
+    output_root: Path,
+    *,
+    metadata_filename: str,
+    frame_filenames: Dict[str, str],
+    dataset_signature: Dict[str, object],
+    params: Dict[str, object],
+) -> Optional[Dict[str, object]]:
+    metadata_path = output_root / metadata_filename
+    if not metadata_path.exists():
+        return None
+
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+    if metadata.get("dataset_signature") != dataset_signature:
+        return None
+    if metadata.get("params") != params:
+        return None
+
+    loaded: Dict[str, object] = {}
+    for key, filename in frame_filenames.items():
+        frame_path = output_root / filename
+        if not frame_path.exists():
+            return None
+        loaded[key] = pd.read_csv(frame_path)
+
+    if "models_evaluated" in metadata:
+        loaded["models_evaluated"] = metadata["models_evaluated"]
+    for key in (
+        "selected_model_name",
+        "selected_model_label",
+        "selection_metric",
+        "selection_metric_value",
+    ):
+        if key in metadata:
+            loaded[key] = metadata[key]
+    return loaded
+
+
+def _write_cached_forecast_frames(
+    output_root: Path,
+    *,
+    metadata_filename: str,
+    frame_filenames: Dict[str, str],
+    payload: Dict[str, object],
+    dataset_signature: Dict[str, object],
+    params: Dict[str, object],
+) -> None:
+    for key, filename in frame_filenames.items():
+        frame = payload.get(key)
+        if not isinstance(frame, pd.DataFrame):
+            continue
+        frame.to_csv(output_root / filename, index=False)
+
+    metadata: Dict[str, object] = {
+        "dataset_signature": dataset_signature,
+        "params": params,
+    }
+    if "models_evaluated" in payload:
+        metadata["models_evaluated"] = list(payload["models_evaluated"])
+    for key in (
+        "selected_model_name",
+        "selected_model_label",
+        "selection_metric",
+        "selection_metric_value",
+    ):
+        if key in payload:
+            metadata[key] = payload[key]
+    (output_root / metadata_filename).write_text(
+        json.dumps(metadata, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def _get_or_create_forecast_backtest_result(df: pd.DataFrame, output_root: Path) -> Dict[str, object]:
+    multi_model_result = _get_or_create_multi_model_backtest_result(df, output_root)
+    if "error" in multi_model_result:
+        return multi_model_result
+
+    yearly_model_overview = multi_model_result.get("yearly_model_overview")
+    if not isinstance(yearly_model_overview, pd.DataFrame) or yearly_model_overview.empty:
+        return {"error": "Multi-model forecast backtest overview is empty or unavailable."}
+
+    selected_model_name = str(
+        multi_model_result.get("selected_model_name")
+        or ""
+    ).strip()
+    if not selected_model_name:
+        return {"error": "No best forecast model could be selected for yearly comparison."}
+
+    selected_rows = (
+        yearly_model_overview.loc[yearly_model_overview["model_name"].astype(str) == selected_model_name]
+        .copy()
+        .sort_values("validation_year")
+        .reset_index(drop=True)
+    )
+    required = {
+        "validation_year",
+        "actual_total_revenue",
+        "predicted_total_revenue",
+        "overall_wape_percent",
+    }
+    if selected_rows.empty or not required.issubset(selected_rows.columns):
+        return {"error": "Selected forecast model does not have a valid yearly comparison overview."}
+
+    yearly_overview = selected_rows[
+        [
+            "validation_year",
+            "actual_total_revenue",
+            "predicted_total_revenue",
+            "overall_wape_percent",
+            "overall_r_squared",
+            "validation_rows",
+            "training_rows",
+            "genres_evaluated",
+            "model_name",
+            "model_label",
+            "validation_start",
+            "validation_end",
+            "cutoff_date",
+        ]
+    ].copy()
+    result: Dict[str, object] = {
+        "yearly_overview": yearly_overview,
+        "selected_model_name": selected_model_name,
+        "selected_model_label": multi_model_result.get("selected_model_label"),
+        "selection_metric": multi_model_result.get("selection_metric"),
+        "selection_metric_value": multi_model_result.get("selection_metric_value"),
+    }
+
+    dataset_signature = _build_forecast_cache_signature(df)
+    params = {
+        "start_year": FORECAST_YEAR_SELECTION_START,
+        "end_year": FORECAST_YEAR_SELECTION_END,
+        "max_years": 0,
+        "model_names": list(FORECAST_SUPPORTED_MODELS),
+        "result_type": "selected_model_yearly_comparison",
+        "selection_metric": "yearly_revenue_correlation",
+    }
+    _write_cached_forecast_frames(
+        output_root,
+        metadata_filename=FORECAST_BACKTEST_METADATA_FILENAME,
+        frame_filenames={
+            "yearly_overview": FORECAST_BACKTEST_OVERVIEW_FILENAME,
+        },
+        payload=result,
+        dataset_signature=dataset_signature,
+        params=params,
+    )
+    return result
+
+
+def _get_or_create_multi_model_backtest_result(df: pd.DataFrame, output_root: Path) -> Dict[str, object]:
+    dataset_signature = _build_forecast_cache_signature(df)
+    params = {
+        "start_year": FORECAST_YEAR_SELECTION_START,
+        "end_year": FORECAST_YEAR_SELECTION_END,
+        "max_years": 0,
+        "model_names": list(FORECAST_SUPPORTED_MODELS),
+        "result_type": "multi_model_backtest",
+    }
+    cached = _load_cached_forecast_frames(
+        output_root,
+        metadata_filename=FORECAST_MULTI_MODEL_METADATA_FILENAME,
+        frame_filenames={
+            "yearly_model_overview": FORECAST_MULTI_MODEL_OVERVIEW_FILENAME,
+            "model_summary": FORECAST_MULTI_MODEL_SUMMARY_FILENAME,
+        },
+        dataset_signature=dataset_signature,
+        params=params,
+    )
+    if cached is not None:
+        return cached
+
+    result = backtest_multiple_forecast_models(
+        df,
+        model_names=FORECAST_SUPPORTED_MODELS,
+        start_year=FORECAST_YEAR_SELECTION_START,
+        end_year=FORECAST_YEAR_SELECTION_END,
+        max_years=0,
+    )
+    if "error" not in result:
+        _write_cached_forecast_frames(
+            output_root,
+            metadata_filename=FORECAST_MULTI_MODEL_METADATA_FILENAME,
+            frame_filenames={
+                "yearly_model_overview": FORECAST_MULTI_MODEL_OVERVIEW_FILENAME,
+                "model_summary": FORECAST_MULTI_MODEL_SUMMARY_FILENAME,
+            },
+            payload=result,
+            dataset_signature=dataset_signature,
+            params=params,
+        )
+    return result
 
 
 class DataVisualizer:
@@ -84,6 +337,12 @@ class DataVisualizer:
         if magnitude >= 1_000:
             return f"${value / 1_000:.0f}K"
         return f"${value:,.0f}"
+
+    @staticmethod
+    def _format_validation_year_label(year: int) -> str:
+        if int(year) == 2017:
+            return "2017 (Jan-Jul only)"
+        return str(int(year))
 
     def draw_genre_bar_chart(
         self,
@@ -399,6 +658,7 @@ class DataVisualizer:
         )
         self._apply_axes_style(ax1, "Forecast Backtest Accuracy by Year", "Validation Year", "WAPE (%)")
         ax1.set_xticks(years)
+        ax1.set_xticklabels([self._format_validation_year_label(year) for year in years], rotation=0)
 
         for year, validation_rows in zip(years, plot_data["validation_rows"].astype(int)):
             ax1.text(
@@ -472,6 +732,9 @@ class DataVisualizer:
         if plot_data.empty:
             raise ValueError("Backtest overview does not contain valid yearly revenue totals.")
 
+        selected_model_label = str(backtest_result.get("selected_model_label") or "").strip()
+        selection_metric = str(backtest_result.get("selection_metric") or "").strip()
+        selection_metric_value = pd.to_numeric(pd.Series([backtest_result.get("selection_metric_value")]), errors="coerce").iloc[0]
         years = plot_data["validation_year"].astype(int).tolist()
         x_positions = np.arange(len(plot_data))
         width = 0.38
@@ -500,7 +763,7 @@ class DataVisualizer:
             ylabel="Total Revenue (USD)",
         )
         ax.set_xticks(x_positions)
-        ax.set_xticklabels(years)
+        ax.set_xticklabels([self._format_validation_year_label(year) for year in years])
         ax.yaxis.set_major_formatter(FuncFormatter(self._currency_formatter))
         ax.legend(frameon=False, ncol=2, loc="upper left")
 
@@ -523,6 +786,15 @@ class DataVisualizer:
                 color="#6A5A4A",
             )
 
+        footer_parts: list[str] = []
+        if selected_model_label:
+            footer_parts.append(f"Selected model: {selected_model_label}")
+        if selection_metric == "yearly_revenue_correlation" and pd.notna(selection_metric_value):
+            footer_parts.append(f"Correlation: {float(selection_metric_value):.3f}")
+        if footer_parts:
+            fig.subplots_adjust(bottom=0.18)
+            fig.text(0.5, 0.04, "  |  ".join(footer_parts), ha="center", fontsize=12, color="#4F5D75")
+
         fig.savefig(output, bbox_inches="tight", facecolor="white")
         plt.close(fig)
 
@@ -531,6 +803,113 @@ class DataVisualizer:
             "chart": "forecast_backtest_yearly_comparison",
             "start_year": int(min(years)),
             "end_year": int(max(years)),
+            "selected_model_name": str(backtest_result.get("selected_model_name") or ""),
+            "selected_model_label": selected_model_label,
+        }
+
+    def draw_multi_model_forecast_backtest_lines(
+        self,
+        multi_model_backtest_result: Dict[str, object],
+        output_path: str | Path = "outputs/forecast_model_backtest_comparison.png",
+        figsize: Tuple[float, float] = (14.4, 8.6),
+        dpi: int = 240,
+    ) -> Dict[str, Any]:
+        """Draw one line chart comparing actual revenue against multiple forecast models."""
+        if "error" in multi_model_backtest_result:
+            raise ValueError(str(multi_model_backtest_result["error"]))
+
+        overview = multi_model_backtest_result.get("yearly_model_overview")
+        if not isinstance(overview, pd.DataFrame) or overview.empty:
+            raise ValueError("Multi-model forecast backtest overview is empty or unavailable.")
+
+        required = {"validation_year", "model_name", "model_label", "actual_total_revenue", "predicted_total_revenue"}
+        if not required.issubset(overview.columns):
+            raise ValueError("Multi-model forecast backtest overview is incomplete.")
+
+        plot_data = overview.copy()
+        plot_data["validation_year"] = pd.to_numeric(plot_data["validation_year"], errors="coerce")
+        plot_data["actual_total_revenue"] = pd.to_numeric(plot_data["actual_total_revenue"], errors="coerce")
+        plot_data["predicted_total_revenue"] = pd.to_numeric(plot_data["predicted_total_revenue"], errors="coerce")
+        plot_data = plot_data.dropna(subset=["validation_year", "actual_total_revenue", "predicted_total_revenue"]).copy()
+        if plot_data.empty:
+            raise ValueError("Multi-model forecast backtest overview does not contain valid yearly totals.")
+
+        plot_data["validation_year"] = plot_data["validation_year"].astype(int)
+        plot_data = plot_data.sort_values(["validation_year", "model_name"]).reset_index(drop=True)
+
+        actual_series = (
+            plot_data[["validation_year", "actual_total_revenue"]]
+            .drop_duplicates(subset=["validation_year"])
+            .sort_values("validation_year")
+        )
+        years = actual_series["validation_year"].tolist()
+        output = self._prepare_output(output_path)
+
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+        ax.plot(
+            years,
+            actual_series["actual_total_revenue"],
+            color="#1F2A44",
+            linewidth=3.4,
+            marker="o",
+            markersize=6.5,
+            label="Actual Revenue",
+        )
+
+        model_summary = multi_model_backtest_result.get("model_summary")
+        if isinstance(model_summary, pd.DataFrame) and not model_summary.empty:
+            summary_lookup = {
+                str(row["model_name"]): row
+                for _, row in model_summary.iterrows()
+            }
+        else:
+            summary_lookup = {}
+
+        colors = [
+            "#33658A",
+            "#F26419",
+            "#758E4F",
+            "#7D82B8",
+            "#C8553D",
+            "#86BBD8",
+        ]
+        for index, model_name in enumerate(sorted(plot_data["model_name"].astype(str).unique().tolist())):
+            model_rows = plot_data.loc[plot_data["model_name"].astype(str) == model_name].sort_values("validation_year")
+            summary_row = summary_lookup.get(model_name)
+            label = FORECAST_MODEL_LABELS.get(model_name, model_name)
+            if summary_row is not None:
+                label = f"{label} (avg WAPE {float(summary_row['average_wape_percent']):.1f}%)"
+
+            ax.plot(
+                model_rows["validation_year"],
+                model_rows["predicted_total_revenue"],
+                linewidth=2.6,
+                marker="o",
+                markersize=5.5,
+                color=colors[index % len(colors)],
+                label=label,
+            )
+
+        self._apply_axes_style(
+            ax,
+            "Multi-Model Box Office Forecast Backtest",
+            xlabel="Validation Year",
+            ylabel="Total Revenue (USD)",
+        )
+        ax.set_xticks(years)
+        ax.set_xticklabels([self._format_validation_year_label(year) for year in years])
+        ax.yaxis.set_major_formatter(FuncFormatter(self._currency_formatter))
+        ax.legend(frameon=False, ncol=2, loc="upper left")
+
+        fig.savefig(output, bbox_inches="tight", facecolor="white")
+        plt.close(fig)
+
+        return {
+            "output_path": str(output),
+            "chart": "forecast_model_backtest_comparison",
+            "start_year": int(min(years)),
+            "end_year": int(max(years)),
+            "models_evaluated": int(plot_data["model_name"].nunique()),
         }
 
 
@@ -590,6 +969,19 @@ def create_forecast_backtest_yearly_comparison_chart(
     return visualizer.draw_forecast_backtest_yearly_comparison(backtest_result, output_path=output_path, dpi=dpi)
 
 
+def create_multi_model_forecast_backtest_chart(
+    multi_model_backtest_result: Dict[str, object],
+    output_path: str | Path = "outputs/forecast_model_backtest_comparison.png",
+    dpi: int = 240,
+) -> Dict[str, Any]:
+    visualizer = DataVisualizer()
+    return visualizer.draw_multi_model_forecast_backtest_lines(
+        multi_model_backtest_result,
+        output_path=output_path,
+        dpi=dpi,
+    )
+
+
 def create_project_visuals(
     df: pd.DataFrame,
     output_dir: str | Path = "outputs",
@@ -642,16 +1034,18 @@ def create_project_visuals(
             )["output_path"]
 
     if include_global_forecast:
-        backtest_result = backtest_genre_revenue_models(
-            df,
-            start_year=FORECAST_YEAR_SELECTION_START,
-            end_year=FORECAST_YEAR_SELECTION_END,
-            max_years=0,
-        )
+        backtest_result = _get_or_create_forecast_backtest_result(df, output_root)
         if "error" not in backtest_result:
             created["forecast_backtest_yearly_comparison"] = create_forecast_backtest_yearly_comparison_chart(
                 backtest_result,
                 output_path=output_root / "forecast_backtest_yearly_comparison.png",
+            )["output_path"]
+
+        multi_model_result = _get_or_create_multi_model_backtest_result(df, output_root)
+        if "error" not in multi_model_result:
+            created["forecast_model_backtest_comparison"] = create_multi_model_forecast_backtest_chart(
+                multi_model_result,
+                output_path=output_root / "forecast_model_backtest_comparison.png",
             )["output_path"]
 
     return created

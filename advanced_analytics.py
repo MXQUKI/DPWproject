@@ -7,6 +7,8 @@ from typing import Dict, Optional
 import numpy as np
 import pandas as pd
 
+from box_office_forecasting import profile_high_box_office_characteristics
+
 
 class AdvancedAnalytics:
     """Higher-level analyses used for the optional project section."""
@@ -67,6 +69,64 @@ class AdvancedAnalytics:
             "average_growth_rate": round(average_growth, 2),
             "yearly_data": yearly.reset_index().to_dict("records"),
             "regression_intercept": round(intercept, 4),
+        }
+
+    def analyze_time_series_summary(self) -> Dict[str, object]:
+        """Summarise long-term time-based behaviour for the current dataset slice."""
+        if "year" not in self.df.columns:
+            return {"error": "Year data is not available."}
+
+        working = self.df.dropna(subset=["year"]).copy()
+        if working.empty:
+            return {"error": "No year values available for time series analysis."}
+
+        grouped = working.groupby("year").agg(
+            movie_count=("title", "count"),
+            avg_rating=("vote_average", "mean"),
+            total_revenue=("revenue", "sum"),
+        ).sort_index()
+        if grouped.empty:
+            return {"error": "Time series aggregation is empty."}
+
+        grouped["movie_count_ma3"] = grouped["movie_count"].rolling(3, min_periods=1).mean()
+        grouped["total_revenue_ma3"] = grouped["total_revenue"].rolling(3, min_periods=1).mean()
+        grouped["movie_count_yoy_percent"] = grouped["movie_count"].pct_change() * 100.0
+        grouped["revenue_yoy_percent"] = grouped["total_revenue"].pct_change() * 100.0
+
+        revenue_series = grouped["total_revenue"].astype(float)
+        count_series = grouped["movie_count"].astype(float)
+        rating_series = grouped["avg_rating"].astype(float)
+        years = grouped.index.to_numpy(dtype=float)
+
+        if len(grouped) > 1:
+            revenue_slope, _ = np.polyfit(years - years.min(), revenue_series.to_numpy(dtype=float), 1)
+            count_slope, _ = np.polyfit(years - years.min(), count_series.to_numpy(dtype=float), 1)
+        else:
+            revenue_slope = 0.0
+            count_slope = 0.0
+
+        strongest_revenue_growth_year = None
+        if grouped["revenue_yoy_percent"].dropna().empty is False:
+            strongest_revenue_growth_year = int(grouped["revenue_yoy_percent"].idxmax())
+
+        return {
+            "period": f"{int(grouped.index.min())}-{int(grouped.index.max())}",
+            "start_year": int(grouped.index.min()),
+            "end_year": int(grouped.index.max()),
+            "peak_movie_count_year": int(grouped["movie_count"].idxmax()),
+            "peak_movie_count": int(grouped["movie_count"].max()),
+            "peak_revenue_year": int(grouped["total_revenue"].idxmax()),
+            "peak_revenue": round(float(grouped["total_revenue"].max()), 2),
+            "highest_rating_year": int(grouped["avg_rating"].idxmax()),
+            "highest_rating": round(float(grouped["avg_rating"].max()), 2),
+            "movie_count_trend": "increasing" if count_slope > 0 else "decreasing" if count_slope < 0 else "stable",
+            "revenue_trend": "increasing" if revenue_slope > 0 else "decreasing" if revenue_slope < 0 else "stable",
+            "movie_count_trend_slope": round(float(count_slope), 4),
+            "revenue_trend_slope": round(float(revenue_slope), 2),
+            "latest_movie_count_ma3": round(float(grouped["movie_count_ma3"].iloc[-1]), 2),
+            "latest_revenue_ma3": round(float(grouped["total_revenue_ma3"].iloc[-1]), 2),
+            "strongest_revenue_growth_year": strongest_revenue_growth_year,
+            "yearly_series": grouped.reset_index().round(4).to_dict("records"),
         }
 
     def analyze_budget_revenue_correlation(self) -> Dict[str, object]:
@@ -235,9 +295,11 @@ def get_comprehensive_analysis(df: pd.DataFrame) -> Dict[str, object]:
     analyzer = AdvancedAnalytics(df)
     return {
         "production_trend": analyzer.analyze_yearly_production(),
+        "time_series_summary": analyzer.analyze_time_series_summary(),
         "budget_revenue_correlation": analyzer.analyze_budget_revenue_correlation(),
         "decade_comparison": analyzer.decade_comparison(),
         "genre_performance": analyzer.genre_performance_analysis().to_dict("records"),
+        "high_box_office_profile": profile_high_box_office_characteristics(df),
     }
 
 

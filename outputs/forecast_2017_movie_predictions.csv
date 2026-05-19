@@ -1,94 +1,94 @@
 genre,title,release_date,budget,budget_observed,runtime,runtime_observed,actual_revenue,revenue_observed,predicted_revenue,absolute_error,ape_percent,model_type
-Action,Bairavaa,2017-01-12,,False,168.0,True,17000000.0,True,787670.43,16212329.57,95.37,global_ridge_calibrated
-Action,Sleepless,2017-01-12,30000000.0,True,95.0,True,32540674.0,True,38179504.34,5638830.34,17.33,global_ridge_calibrated
-Action,xXx: Return of Xander Cage,2017-01-13,85000000.0,True,107.0,True,346147658.0,True,138793714.4,207353943.6,59.9,global_ridge_calibrated
-Action,Confidential Assignment,2017-01-18,8520000.0,True,125.0,True,56100000.0,True,11007700.52,45092299.48,80.38,global_ridge_calibrated
-Action,The Lego Batman Movie,2017-02-08,80000000.0,True,104.0,True,311950384.0,True,127731197.93,184219186.07,59.05,global_ridge_calibrated
-Action,Logan,2017-02-28,97000000.0,True,137.0,True,616801808.0,True,295737942.4,321063865.6,52.05,global_ridge_calibrated
-Action,Kong: Skull Island,2017-03-08,185000000.0,True,118.0,True,566652812.0,True,399213932.53,167438879.47,29.55,global_ridge_calibrated
-Action,CHiPS,2017-03-23,25000000.0,True,100.0,True,26800152.0,True,40848764.93,14048612.93,52.42,global_ridge_calibrated
-Action,Power Rangers,2017-03-23,100000000.0,True,124.0,True,142337240.0,True,255230964.7,112893724.7,79.31,global_ridge_calibrated
-Action,Ghost in the Shell,2017-03-29,110000000.0,True,107.0,True,169801921.0,True,193681835.46,23879914.46,14.06,global_ridge_calibrated
-Action,Free Fire,2017-03-31,10000000.0,True,90.0,True,3565109.0,True,3044378.09,520730.91,14.61,global_ridge_calibrated
+Action,Bairavaa,2017-01-12,,False,168.0,True,17000000.0,True,884542.58,16115457.42,94.8,global_ridge_calibrated
+Action,Sleepless,2017-01-12,30000000.0,True,95.0,True,32540674.0,True,38168761.95,5628087.95,17.3,global_ridge_calibrated
+Action,xXx: Return of Xander Cage,2017-01-13,85000000.0,True,107.0,True,346147658.0,True,138855124.65,207292533.35,59.89,global_ridge_calibrated
+Action,Confidential Assignment,2017-01-18,8520000.0,True,125.0,True,56100000.0,True,11032711.66,45067288.34,80.33,global_ridge_calibrated
+Action,The Lego Batman Movie,2017-02-08,80000000.0,True,104.0,True,311950384.0,True,127935323.46,184015060.54,58.99,global_ridge_calibrated
+Action,Logan,2017-02-28,97000000.0,True,137.0,True,616801808.0,True,295120719.55,321681088.45,52.15,global_ridge_calibrated
+Action,Kong: Skull Island,2017-03-08,185000000.0,True,118.0,True,566652812.0,True,400351568.76,166301243.24,29.35,global_ridge_calibrated
+Action,CHiPS,2017-03-23,25000000.0,True,100.0,True,26800152.0,True,40847897.18,14047745.18,52.42,global_ridge_calibrated
+Action,Power Rangers,2017-03-23,100000000.0,True,124.0,True,142337240.0,True,255271195.47,112933955.47,79.34,global_ridge_calibrated
+Action,Ghost in the Shell,2017-03-29,110000000.0,True,107.0,True,169801921.0,True,194229533.69,24427612.69,14.39,global_ridge_calibrated
+Action,Free Fire,2017-03-31,10000000.0,True,90.0,True,3565109.0,True,3068708.6,496400.4,13.92,global_ridge_calibrated
 Action,Colossal,2017-04-06,,False,110.0,True,3021345.0,True,0.0,3021345.0,100.0,global_ridge_calibrated
-Action,The Fate of the Furious,2017-04-12,250000000.0,True,136.0,True,1238764765.0,True,759278562.37,479486202.63,38.71,global_ridge_calibrated
-Action,Guardians of the Galaxy Vol. 2,2017-04-19,200000000.0,True,137.0,True,863416141.0,True,627457847.36,235958293.64,27.33,global_ridge_calibrated
-Action,Baahubali 2: The Conclusion,2017-04-27,18000000.0,True,161.0,True,230000000.0,True,48151455.79,181848544.21,79.06,global_ridge_calibrated
-Action,King Arthur: Legend of the Sword,2017-04-27,175000000.0,True,126.0,True,146175066.0,True,460836171.95,314661105.95,215.26,global_ridge_calibrated
-Action,Snatched,2017-05-03,42000000.0,True,90.0,True,60845711.0,True,53460023.5,7385687.5,12.14,global_ridge_calibrated
-Action,Baywatch,2017-05-12,69000000.0,True,116.0,True,177856751.0,True,163881597.71,13975153.29,7.86,global_ridge_calibrated
-Action,Wonder Woman,2017-05-30,149000000.0,True,141.0,True,820580447.0,True,517529760.01,303050686.99,36.93,global_ridge_calibrated
-Action,Captain Underpants: The First Epic Movie,2017-06-01,38000000.0,True,89.0,True,110824373.0,True,46869794.76,63954578.24,57.71,global_ridge_calibrated
-Action,Despicable Me 3,2017-06-15,80000000.0,True,96.0,True,1020063384.0,True,115003898.06,905059485.94,88.73,global_ridge_calibrated
-Action,Transformers: The Last Knight,2017-06-21,260000000.0,True,149.0,True,604942143.0,True,954817890.58,349875747.58,57.84,global_ridge_calibrated
-Action,Baby Driver,2017-06-28,34000000.0,True,113.0,True,224511319.0,True,79559659.96,144951659.04,64.56,global_ridge_calibrated
-Action,Dunkirk,2017-07-19,100000000.0,True,107.0,True,519876949.0,True,181399790.1,338477158.9,65.11,global_ridge_calibrated
-Action,Atomic Blonde,2017-07-26,30000000.0,True,115.0,True,90007945.0,True,71872903.94,18135041.06,20.15,global_ridge_calibrated
-Adventure,Sahara,2017-02-01,,False,86.0,True,7800000.0,True,35802387.17,28002387.17,359.0,global_ridge_calibrated
-Adventure,Smurfs: The Lost Village,2017-03-23,60000000.0,True,89.0,True,197183546.0,True,100115871.67,97067674.33,49.23,global_ridge_calibrated
-Adventure,The Spacewalker,2017-04-12,7075038.0,True,140.0,True,9868942.0,True,51946694.55,42077752.55,426.37,global_ridge_calibrated
-Adventure,Spark: A Space Tail,2017-04-14,,False,97.0,True,116873.0,True,36141771.1,36024898.1,30823.97,global_ridge_calibrated
-Adventure,Pirates of the Caribbean: Dead Men Tell No Tales,2017-05-23,230000000.0,True,129.0,True,794191988.0,True,595972883.67,198219104.33,24.96,global_ridge_calibrated
-Adventure,Valerian and the City of a Thousand Planets,2017-07-20,197471676.0,True,137.0,True,90024292.0,True,263741937.49,173717645.49,192.97,global_ridge_calibrated
-Animation,The Boss Baby,2017-03-23,125000000.0,True,97.0,True,498814908.0,True,399305531.49,99509376.51,19.95,global_ridge_calibrated
-Comedy,A Dog's Purpose,2017-01-19,22000000.0,True,100.0,True,194647323.0,True,48661080.32,145986242.68,75.0,global_ridge_calibrated
-Comedy,Table 19,2017-01-20,5000000.0,True,87.0,True,3305592.0,True,21954460.71,18648868.71,564.16,global_ridge_calibrated
-Comedy,Alibi.com,2017-02-15,,False,90.0,True,222430.0,True,16492371.86,16269941.86,7314.63,global_ridge_calibrated
-Comedy,"Have Fun, Vasya!",2017-02-16,707503.0,True,90.0,True,4781454.0,True,16218924.21,11437470.21,239.2,global_ridge_calibrated
-Comedy,The Last Word,2017-03-03,,False,108.0,True,1783421.0,True,18724780.99,16941359.99,949.94,global_ridge_calibrated
-Comedy,A Few Less Men,2017-03-09,,False,96.0,True,123899.0,True,16484776.14,16360877.14,13205.01,global_ridge_calibrated
-Comedy,How to Be a Latin Lover,2017-04-28,,False,115.0,True,26251899.0,True,19424958.64,6826940.36,26.01,global_ridge_calibrated
-Comedy,The Lovers,2017-05-05,,False,94.0,True,214078.0,True,17895726.61,17681648.61,8259.44,global_ridge_calibrated
-Comedy,Diary of a Wimpy Kid: The Long Haul,2017-05-19,22000000.0,True,91.0,True,40120144.0,True,45890617.46,5770473.46,14.38,global_ridge_calibrated
-Comedy,The Big Sick,2017-06-23,,False,120.0,True,52620184.0,True,19910828.45,32709355.55,62.16,global_ridge_calibrated
-Comedy,The Emoji Movie,2017-07-28,50000000.0,True,86.0,True,66913939.0,True,68166735.13,1252796.13,1.87,global_ridge_calibrated
-Crime,T2 Trainspotting,2017-01-27,18000000.0,True,117.0,True,41412709.0,True,19324474.35,22088234.65,53.34,global_ridge_calibrated
-Crime,Going in Style,2017-04-06,25000000.0,True,96.0,True,84618541.0,True,33073606.81,51544934.19,60.91,global_ridge_calibrated
-Documentary,The Man Who Was Too Free,2017-02-23,,False,126.0,True,77156.0,True,5791776.0,5714620.0,7406.58,global_ridge_calibrated
-Documentary,Chasing Trane,2017-04-14,,False,99.0,True,393970.0,True,5821048.31,5427078.31,1377.54,global_ridge_calibrated
-Drama,Ok Jaanu,2017-01-03,,False,135.0,True,345872.0,True,11234598.78,10888726.78,3148.2,global_ridge_calibrated
-Drama,Lady Macbeth,2017-01-20,,False,89.0,True,923.0,True,10541167.19,10540244.19,1141954.95,global_ridge_calibrated
-Drama,Fifty Shades Darker,2017-02-08,55000000.0,True,118.0,True,378827494.0,True,84990984.73,293836509.27,77.56,global_ridge_calibrated
-Drama,Lovesong,2017-02-17,,False,85.0,True,6700.0,True,10882667.24,10875967.24,162327.87,global_ridge_calibrated
-Drama,The Shack,2017-03-03,20000000.0,True,132.0,True,57330873.0,True,50513679.77,6817193.23,11.89,global_ridge_calibrated
-Drama,Song to Song,2017-03-17,10000000.0,True,129.0,True,443684.0,True,30757981.24,30314297.24,6832.41,global_ridge_calibrated
-Drama,Wilson,2017-03-24,,False,94.0,True,653951.0,True,11102960.15,10449009.15,1597.83,global_ridge_calibrated
-Drama,The Zookeeper's Wife,2017-03-31,20000000.0,True,126.0,True,13162475.0,True,46516277.74,33353802.74,253.4,global_ridge_calibrated
-Drama,Aftermath,2017-04-06,10500000.0,True,92.0,True,3451.0,True,19973067.7,19969616.7,578661.74,global_ridge_calibrated
-Drama,Gifted,2017-04-12,7000000.0,True,101.0,True,37461045.0,True,18826163.95,18634881.05,49.74,global_ridge_calibrated
-Drama,Unforgettable,2017-04-20,12000000.0,True,100.0,True,17768012.0,True,23772736.98,6004724.98,33.8,global_ridge_calibrated
-Drama,The Circle,2017-04-27,18000000.0,True,110.0,True,20497844.0,True,34983427.04,14485583.04,70.67,global_ridge_calibrated
-Drama,Lowriders,2017-04-28,916000.0,True,99.0,True,2403885.0,True,11649029.93,9245144.93,384.59,global_ridge_calibrated
-Drama,The Dinner,2017-05-05,,False,120.0,True,1323312.0,True,11903266.46,10579954.46,799.51,global_ridge_calibrated
-Drama,The Wall,2017-05-12,,False,89.0,True,1803009.0,True,11037786.66,9234777.66,512.19,global_ridge_calibrated
-Drama,My Cousin Rachel,2017-06-08,,False,106.0,True,2676077.0,True,11463412.8,8787335.8,328.37,global_ridge_calibrated
-Drama,The Hero,2017-06-09,,False,97.0,True,3384747.0,True,11221441.73,7836694.73,231.53,global_ridge_calibrated
-Drama,47 Meters Down,2017-06-15,5500000.0,True,89.0,True,44235023.0,True,12422564.0,31812459.0,71.92,global_ridge_calibrated
-Drama,Rough Night,2017-06-15,20000000.0,True,101.0,True,45056771.0,True,32503365.8,12553405.2,27.86,global_ridge_calibrated
-Drama,The Beguiled,2017-06-23,10500000.0,True,93.0,True,25442939.0,True,20368998.05,5073940.95,19.94,global_ridge_calibrated
-Drama,2:22,2017-06-29,,False,99.0,True,422.0,True,11272554.89,11272132.89,2671121.54,global_ridge_calibrated
-Drama,A Ghost Story,2017-07-07,100000.0,True,92.0,True,15584255.0,True,10436433.51,5147821.49,33.03,global_ridge_calibrated
-Drama,War for the Planet of the Apes,2017-07-11,152000000.0,True,140.0,True,369907963.0,True,314291045.07,55616917.93,15.04,global_ridge_calibrated
-Family,Beauty and the Beast,2017-03-16,160000000.0,True,129.0,True,1262886337.0,True,977240614.47,285645722.53,22.62,global_ridge_calibrated
-Family,Cars 3,2017-06-15,175000000.0,True,109.0,True,350170057.0,True,750628929.02,400458872.02,114.36,global_ridge_calibrated
-Horror,The Bye Bye Man,2017-01-12,7400000.0,True,96.0,True,26667197.0,True,34252608.67,7585411.67,28.44,global_ridge_calibrated
-Horror,Rings,2017-02-01,25000000.0,True,102.0,True,83080890.0,True,51502814.38,31578075.62,38.01,global_ridge_calibrated
-Horror,XX,2017-02-17,,False,80.0,True,30911.0,True,28452879.78,28421968.78,91947.75,global_ridge_calibrated
-Horror,Life,2017-03-22,58000000.0,True,103.0,True,100541806.0,True,84731857.75,15809948.25,15.72,global_ridge_calibrated
-Horror,Phoenix Forgotten,2017-04-21,2800000.0,True,80.0,True,3600000.0,True,30004497.01,26404497.01,733.46,global_ridge_calibrated
-Horror,Alien: Covenant,2017-05-09,97000000.0,True,122.0,True,232380243.0,True,178325115.21,54055127.79,23.26,global_ridge_calibrated
-Mystery,Black Snow,2017-01-19,4000000.0,True,90.0,True,1440000.0,True,15107921.61,13667921.61,949.16,global_ridge_calibrated
-Mystery,Kung Fu Yoga,2017-01-27,65000000.0,True,130.0,True,254212245.0,True,58190832.87,196021412.13,77.11,global_ridge_calibrated
-Mystery,A Cure for Wellness,2017-02-15,40000000.0,True,146.0,True,26559557.0,True,89230223.66,62670666.66,235.96,global_ridge_calibrated
-Mystery,Get Out,2017-02-24,5000000.0,True,104.0,True,252434250.0,True,19815455.65,232618794.35,92.15,global_ridge_calibrated
-Mystery,Before I Fall,2017-03-02,5000000.0,True,98.0,True,10025571.0,True,19170938.77,9145367.77,91.22,global_ridge_calibrated
-Mystery,Buster's Mal Heart,2017-04-28,,False,96.0,True,73121.0,True,18027720.93,17954599.93,24554.64,global_ridge_calibrated
-Mystery,Berlin Syndrome,2017-05-25,,False,116.0,True,201719.0,True,16534214.63,16332495.63,8096.66,global_ridge_calibrated
-Romance,The Space Between Us,2017-01-26,30000000.0,True,121.0,True,14793385.0,True,84081227.54,69287842.54,468.37,global_ridge_calibrated
-Romance,The Ottoman Lieutenant,2017-03-10,40000000.0,True,111.0,True,240978.0,True,94605887.92,94364909.92,39159.14,global_ridge_calibrated
-Romance,Their Finest,2017-04-06,32745300.0,True,117.0,True,12173470.0,True,52666374.05,40492904.05,332.63,global_ridge_calibrated
-Thriller,John Wick: Chapter 2,2017-02-08,40000000.0,True,122.0,True,171539887.0,True,91422393.92,80117493.08,46.7,global_ridge_calibrated
-Thriller,The Mummy,2017-06-06,125000000.0,True,110.0,True,407778013.0,True,212301612.13,195476400.87,47.94,global_ridge_calibrated
-Thriller,The Book of Henry,2017-06-16,10000000.0,True,105.0,True,4219536.0,True,30207224.98,25987688.98,615.89,global_ridge_calibrated
-War,Bitter Harvest,2017-02-23,20000000.0,True,103.0,True,557241.0,True,18159073.32,17601832.32,3158.75,global_ridge_calibrated
-War,Rescue Under Fire,2017-03-10,,False,93.0,True,5000000.0,True,13866883.12,8866883.12,177.34,global_ridge_calibrated
+Action,The Fate of the Furious,2017-04-12,250000000.0,True,136.0,True,1238764765.0,True,761029024.49,477735740.51,38.57,global_ridge_calibrated
+Action,Guardians of the Galaxy Vol. 2,2017-04-19,200000000.0,True,137.0,True,863416141.0,True,628379641.41,235036499.59,27.22,global_ridge_calibrated
+Action,Baahubali 2: The Conclusion,2017-04-27,18000000.0,True,161.0,True,230000000.0,True,48260818.74,181739181.26,79.02,global_ridge_calibrated
+Action,King Arthur: Legend of the Sword,2017-04-27,175000000.0,True,126.0,True,146175066.0,True,461838678.88,315663612.88,215.95,global_ridge_calibrated
+Action,Snatched,2017-05-03,42000000.0,True,90.0,True,60845711.0,True,53669159.7,7176551.3,11.79,global_ridge_calibrated
+Action,Baywatch,2017-05-12,69000000.0,True,116.0,True,177856751.0,True,163998240.63,13858510.37,7.79,global_ridge_calibrated
+Action,Wonder Woman,2017-05-30,149000000.0,True,141.0,True,820580447.0,True,517668799.97,302911647.03,36.91,global_ridge_calibrated
+Action,Captain Underpants: The First Epic Movie,2017-06-01,38000000.0,True,89.0,True,110824373.0,True,47035765.62,63788607.38,57.56,global_ridge_calibrated
+Action,Despicable Me 3,2017-06-15,80000000.0,True,96.0,True,1020063384.0,True,115473476.64,904589907.36,88.68,global_ridge_calibrated
+Action,Transformers: The Last Knight,2017-06-21,260000000.0,True,149.0,True,604942143.0,True,955939758.21,350997615.21,58.02,global_ridge_calibrated
+Action,Baby Driver,2017-06-28,34000000.0,True,113.0,True,224511319.0,True,79469118.8,145042200.2,64.6,global_ridge_calibrated
+Action,Dunkirk,2017-07-19,100000000.0,True,107.0,True,519876949.0,True,181788826.8,338088122.2,65.03,global_ridge_calibrated
+Action,Atomic Blonde,2017-07-26,30000000.0,True,115.0,True,90007945.0,True,71696597.28,18311347.72,20.34,global_ridge_calibrated
+Adventure,Sahara,2017-02-01,,False,86.0,True,7800000.0,True,35868432.46,28068432.46,359.85,global_ridge_calibrated
+Adventure,Smurfs: The Lost Village,2017-03-23,60000000.0,True,89.0,True,197183546.0,True,100393963.3,96789582.7,49.09,global_ridge_calibrated
+Adventure,The Spacewalker,2017-04-12,7075038.0,True,140.0,True,9868942.0,True,51979461.87,42110519.87,426.7,global_ridge_calibrated
+Adventure,Spark: A Space Tail,2017-04-14,,False,97.0,True,116873.0,True,36203277.83,36086404.83,30876.6,global_ridge_calibrated
+Adventure,Pirates of the Caribbean: Dead Men Tell No Tales,2017-05-23,230000000.0,True,129.0,True,794191988.0,True,597499332.4,196692655.6,24.77,global_ridge_calibrated
+Adventure,Valerian and the City of a Thousand Planets,2017-07-20,197471676.0,True,137.0,True,90024292.0,True,264452881.66,174428589.66,193.76,global_ridge_calibrated
+Animation,The Boss Baby,2017-03-23,125000000.0,True,97.0,True,498814908.0,True,399430935.53,99383972.47,19.92,global_ridge_calibrated
+Comedy,A Dog's Purpose,2017-01-19,22000000.0,True,100.0,True,194647323.0,True,48607365.26,146039957.74,75.03,global_ridge_calibrated
+Comedy,Table 19,2017-01-20,5000000.0,True,87.0,True,3305592.0,True,21921075.09,18615483.09,563.15,global_ridge_calibrated
+Comedy,Alibi.com,2017-02-15,,False,90.0,True,222430.0,True,16496896.61,16274466.61,7316.67,global_ridge_calibrated
+Comedy,"Have Fun, Vasya!",2017-02-16,707503.0,True,90.0,True,4781454.0,True,16209023.69,11427569.69,239.0,global_ridge_calibrated
+Comedy,The Last Word,2017-03-03,,False,108.0,True,1783421.0,True,18724571.75,16941150.75,949.92,global_ridge_calibrated
+Comedy,A Few Less Men,2017-03-09,,False,96.0,True,123899.0,True,16482323.8,16358424.8,13203.03,global_ridge_calibrated
+Comedy,How to Be a Latin Lover,2017-04-28,,False,115.0,True,26251899.0,True,19424904.47,6826994.53,26.01,global_ridge_calibrated
+Comedy,The Lovers,2017-05-05,,False,94.0,True,214078.0,True,17900129.89,17686051.89,8261.5,global_ridge_calibrated
+Comedy,Diary of a Wimpy Kid: The Long Haul,2017-05-19,22000000.0,True,91.0,True,40120144.0,True,45956090.9,5835946.9,14.55,global_ridge_calibrated
+Comedy,The Big Sick,2017-06-23,,False,120.0,True,52620184.0,True,19908104.79,32712079.21,62.17,global_ridge_calibrated
+Comedy,The Emoji Movie,2017-07-28,50000000.0,True,86.0,True,66913939.0,True,68440530.28,1526591.28,2.28,global_ridge_calibrated
+Crime,T2 Trainspotting,2017-01-27,18000000.0,True,117.0,True,41412709.0,True,19317996.46,22094712.54,53.35,global_ridge_calibrated
+Crime,Going in Style,2017-04-06,25000000.0,True,96.0,True,84618541.0,True,33159481.61,51459059.39,60.81,global_ridge_calibrated
+Documentary,The Man Who Was Too Free,2017-02-23,,False,126.0,True,77156.0,True,5797277.13,5720121.13,7413.71,global_ridge_calibrated
+Documentary,Chasing Trane,2017-04-14,,False,99.0,True,393970.0,True,5825780.23,5431810.23,1378.74,global_ridge_calibrated
+Drama,Ok Jaanu,2017-01-03,,False,135.0,True,345872.0,True,11275362.28,10929490.28,3159.98,global_ridge_calibrated
+Drama,Lady Macbeth,2017-01-20,,False,89.0,True,923.0,True,10577650.26,10576727.26,1145907.61,global_ridge_calibrated
+Drama,Fifty Shades Darker,2017-02-08,55000000.0,True,118.0,True,378827494.0,True,85097393.92,293730100.08,77.54,global_ridge_calibrated
+Drama,Lovesong,2017-02-17,,False,85.0,True,6700.0,True,10920801.15,10914101.15,162897.03,global_ridge_calibrated
+Drama,The Shack,2017-03-03,20000000.0,True,132.0,True,57330873.0,True,50404592.34,6926280.66,12.08,global_ridge_calibrated
+Drama,Song to Song,2017-03-17,10000000.0,True,129.0,True,443684.0,True,30678994.19,30235310.19,6814.6,global_ridge_calibrated
+Drama,Wilson,2017-03-24,,False,94.0,True,653951.0,True,11141533.51,10487582.51,1603.73,global_ridge_calibrated
+Drama,The Zookeeper's Wife,2017-03-31,20000000.0,True,126.0,True,13162475.0,True,46444806.77,33282331.77,252.86,global_ridge_calibrated
+Drama,Aftermath,2017-04-06,10500000.0,True,92.0,True,3451.0,True,20012794.5,20009343.5,579812.91,global_ridge_calibrated
+Drama,Gifted,2017-04-12,7000000.0,True,101.0,True,37461045.0,True,18840868.11,18620176.89,49.71,global_ridge_calibrated
+Drama,Unforgettable,2017-04-20,12000000.0,True,100.0,True,17768012.0,True,23801113.2,6033101.2,33.95,global_ridge_calibrated
+Drama,The Circle,2017-04-27,18000000.0,True,110.0,True,20497844.0,True,35000824.47,14502980.47,70.75,global_ridge_calibrated
+Drama,Lowriders,2017-04-28,916000.0,True,99.0,True,2403885.0,True,11673341.95,9269456.95,385.6,global_ridge_calibrated
+Drama,The Dinner,2017-05-05,,False,120.0,True,1323312.0,True,11939995.05,10616683.05,802.28,global_ridge_calibrated
+Drama,The Wall,2017-05-12,,False,89.0,True,1803009.0,True,11077260.22,9274251.22,514.38,global_ridge_calibrated
+Drama,My Cousin Rachel,2017-06-08,,False,106.0,True,2676077.0,True,11501568.92,8825491.92,329.79,global_ridge_calibrated
+Drama,The Hero,2017-06-09,,False,97.0,True,3384747.0,True,11260325.02,7875578.02,232.68,global_ridge_calibrated
+Drama,47 Meters Down,2017-06-15,5500000.0,True,89.0,True,44235023.0,True,12460417.48,31774605.52,71.83,global_ridge_calibrated
+Drama,Rough Night,2017-06-15,20000000.0,True,101.0,True,45056771.0,True,32557047.92,12499723.08,27.74,global_ridge_calibrated
+Drama,The Beguiled,2017-06-23,10500000.0,True,93.0,True,25442939.0,True,20404813.13,5038125.87,19.8,global_ridge_calibrated
+Drama,2:22,2017-06-29,,False,99.0,True,422.0,True,11311312.9,11310890.9,2680305.9,global_ridge_calibrated
+Drama,A Ghost Story,2017-07-07,100000.0,True,92.0,True,15584255.0,True,10468988.78,5115266.22,32.82,global_ridge_calibrated
+Drama,War for the Planet of the Apes,2017-07-11,152000000.0,True,140.0,True,369907963.0,True,315255403.22,54652559.78,14.77,global_ridge_calibrated
+Family,Beauty and the Beast,2017-03-16,160000000.0,True,129.0,True,1262886337.0,True,976693032.44,286193304.56,22.66,global_ridge_calibrated
+Family,Cars 3,2017-06-15,175000000.0,True,109.0,True,350170057.0,True,752579971.18,402409914.18,114.92,global_ridge_calibrated
+Horror,The Bye Bye Man,2017-01-12,7400000.0,True,96.0,True,26667197.0,True,34258199.49,7591002.49,28.47,global_ridge_calibrated
+Horror,Rings,2017-02-01,25000000.0,True,102.0,True,83080890.0,True,51465977.88,31614912.12,38.05,global_ridge_calibrated
+Horror,XX,2017-02-17,,False,80.0,True,30911.0,True,28501299.52,28470388.52,92104.39,global_ridge_calibrated
+Horror,Life,2017-03-22,58000000.0,True,103.0,True,100541806.0,True,84760513.11,15781292.89,15.7,global_ridge_calibrated
+Horror,Phoenix Forgotten,2017-04-21,2800000.0,True,80.0,True,3600000.0,True,30043688.8,26443688.8,734.55,global_ridge_calibrated
+Horror,Alien: Covenant,2017-05-09,97000000.0,True,122.0,True,232380243.0,True,178272591.02,54107651.98,23.28,global_ridge_calibrated
+Mystery,Black Snow,2017-01-19,4000000.0,True,90.0,True,1440000.0,True,15118710.2,13678710.2,949.91,global_ridge_calibrated
+Mystery,Kung Fu Yoga,2017-01-27,65000000.0,True,130.0,True,254212245.0,True,58572263.9,195639981.1,76.96,global_ridge_calibrated
+Mystery,A Cure for Wellness,2017-02-15,40000000.0,True,146.0,True,26559557.0,True,89026508.02,62466951.02,235.2,global_ridge_calibrated
+Mystery,Get Out,2017-02-24,5000000.0,True,104.0,True,252434250.0,True,19788089.05,232646160.95,92.16,global_ridge_calibrated
+Mystery,Before I Fall,2017-03-02,5000000.0,True,98.0,True,10025571.0,True,19156735.84,9131164.84,91.08,global_ridge_calibrated
+Mystery,Buster's Mal Heart,2017-04-28,,False,96.0,True,73121.0,True,18082313.19,18009192.19,24629.3,global_ridge_calibrated
+Mystery,Berlin Syndrome,2017-05-25,,False,116.0,True,201719.0,True,16570475.62,16368756.62,8114.63,global_ridge_calibrated
+Romance,The Space Between Us,2017-01-26,30000000.0,True,121.0,True,14793385.0,True,83887833.29,69094448.29,467.06,global_ridge_calibrated
+Romance,The Ottoman Lieutenant,2017-03-10,40000000.0,True,111.0,True,240978.0,True,94662192.82,94421214.82,39182.5,global_ridge_calibrated
+Romance,Their Finest,2017-04-06,32745300.0,True,117.0,True,12173470.0,True,52747304.54,40573834.54,333.3,global_ridge_calibrated
+Thriller,John Wick: Chapter 2,2017-02-08,40000000.0,True,122.0,True,171539887.0,True,91205247.21,80334639.79,46.83,global_ridge_calibrated
+Thriller,The Mummy,2017-06-06,125000000.0,True,110.0,True,407778013.0,True,212912120.46,194865892.54,47.79,global_ridge_calibrated
+Thriller,The Book of Henry,2017-06-16,10000000.0,True,105.0,True,4219536.0,True,30220679.04,26001143.04,616.21,global_ridge_calibrated
+War,Bitter Harvest,2017-02-23,20000000.0,True,103.0,True,557241.0,True,18177780.43,17620539.43,3162.1,global_ridge_calibrated
+War,Rescue Under Fire,2017-03-10,,False,93.0,True,5000000.0,True,13894608.22,8894608.22,177.89,global_ridge_calibrated

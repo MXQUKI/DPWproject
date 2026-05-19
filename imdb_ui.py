@@ -28,7 +28,12 @@ class IMDbExplorerApp:
 
     PAGE_SIZE = 120
     FILTER_FEEDBACK_DEBOUNCE_MS = 90
-    GLOBAL_CHART_KEYS = frozenset({"forecast_backtest_yearly_comparison"})
+    GLOBAL_CHART_KEYS = frozenset(
+        {
+            "forecast_backtest_yearly_comparison",
+            "forecast_model_backtest_comparison",
+        }
+    )
     DEFAULT_SORT = (("vote_average", False), ("revenue", False), ("title", True))
     RESULT_COLUMN_MAP = {
         "id": "id",
@@ -67,6 +72,11 @@ class IMDbExplorerApp:
             "Yearly Forecast vs Actual",
             "Shows each year's predicted total box office beside the actual total box office.",
         ),
+        (
+            "forecast_model_backtest_comparison",
+            "Multi-Model Forecast Lines",
+            "Compares actual yearly revenue with multiple forecast model predictions in one line chart.",
+        ),
     )
     CHART_FILENAMES = {
         "genre_distribution": "genre_distribution.png",
@@ -74,6 +84,7 @@ class IMDbExplorerApp:
         "yearly_rating_trend": "yearly_rating_trend.png",
         "budget_revenue_scatter": "budget_revenue_scatter.png",
         "forecast_backtest_yearly_comparison": "forecast_backtest_yearly_comparison.png",
+        "forecast_model_backtest_comparison": "forecast_model_backtest_comparison.png",
     }
 
     def __init__(self, root: tk.Tk, dataset_path: str | None = None) -> None:
@@ -715,13 +726,22 @@ class IMDbExplorerApp:
         self._refresh_chart_panel()
 
     def _ensure_global_chart_paths(self) -> None:
-        global_chart_key = "forecast_backtest_yearly_comparison"
-        if global_chart_key in self.chart_paths and Path(self.chart_paths[global_chart_key]).exists():
+        required_keys = self.GLOBAL_CHART_KEYS
+        missing_keys: list[str] = []
+        for global_chart_key in required_keys:
+            candidate = self.output_dir / self.CHART_FILENAMES[global_chart_key]
+            if candidate.exists():
+                self.chart_paths[global_chart_key] = str(candidate)
+            else:
+                missing_keys.append(global_chart_key)
+
+        if not missing_keys:
             return
 
         chart_paths = create_project_visuals(self.dataset, output_dir=self.output_dir, include_global_forecast=True)
-        if global_chart_key in chart_paths:
-            self.chart_paths[global_chart_key] = chart_paths[global_chart_key]
+        for global_chart_key in required_keys:
+            if global_chart_key in chart_paths:
+                self.chart_paths[global_chart_key] = chart_paths[global_chart_key]
 
     def _parse_filters(self) -> dict[str, object]:
         filters: dict[str, object] = {}
@@ -1064,6 +1084,7 @@ class IMDbExplorerApp:
             return
 
         self.chart_paths = chart_paths
+        self._ensure_global_chart_paths()
         self._clear_chart_preview_cache()
         self.charts_match_current_filters = True
         self._write_chart_manifest()
@@ -1341,6 +1362,30 @@ class IMDbExplorerApp:
             lines.append("- Calculating advanced insights...")
         else:
             advanced_lines_added = False
+            time_series_summary = self.current_advanced.get("time_series_summary", {})
+            if time_series_summary and "error" not in time_series_summary:
+                lines.extend(["", "Time Series Analysis"])
+                lines.append(
+                    f"- Time window: {time_series_summary['period']} | production trend: {time_series_summary['movie_count_trend']} | "
+                    f"revenue trend: {time_series_summary['revenue_trend']}."
+                )
+                lines.append(
+                    f"- Peak output year: {time_series_summary['peak_movie_count_year']} with {int(time_series_summary['peak_movie_count']):,} movies."
+                )
+                lines.append(
+                    f"- Peak revenue year: {time_series_summary['peak_revenue_year']} with "
+                    f"${float(time_series_summary['peak_revenue']):,.0f} total revenue."
+                )
+                lines.append(
+                    f"- Highest average rating year: {time_series_summary['highest_rating_year']} "
+                    f"({float(time_series_summary['highest_rating']):.2f})."
+                )
+                if time_series_summary.get("strongest_revenue_growth_year") is not None:
+                    lines.append(
+                        f"- Strongest year-over-year revenue growth occurred in {int(time_series_summary['strongest_revenue_growth_year'])}."
+                    )
+                advanced_lines_added = True
+
             production_trend = self.current_advanced.get("production_trend", {})
             if production_trend and "error" not in production_trend:
                 lines.append(
@@ -1360,6 +1405,61 @@ class IMDbExplorerApp:
                 lines.append(
                     f"- Most productive decade: {decade_comparison['most_productive_decade']}s; highest rated decade: {decade_comparison['highest_rated_decade']}s."
                 )
+                advanced_lines_added = True
+
+            high_box_office_profile = self.current_advanced.get("high_box_office_profile", {})
+            if high_box_office_profile and "error" not in high_box_office_profile:
+                overview = high_box_office_profile.get("overview", {})
+                profile = high_box_office_profile.get("high_revenue_profile", {})
+                top_positive_features = high_box_office_profile.get("top_positive_features", [])
+                top_negative_features = high_box_office_profile.get("top_negative_features", [])
+
+                lines.extend(["", "Machine Learning Box Office Profile"])
+                lines.append(
+                    f"- Model: {overview.get('model_label', 'Ridge Revenue Profile')} | sample {overview.get('sample_rows', 0)} movies | "
+                    f"high-box-office threshold ${float(overview.get('high_revenue_threshold', 0.0)):,.0f} "
+                    f"(top {int(round((1 - float(overview.get('high_revenue_quantile', 0.75))) * 100))}% revenue tier)."
+                )
+                lines.append(
+                    f"- Validation on {overview.get('evaluation_scope', 'current selection')}: "
+                    f"R^2 = {float(overview.get('r_squared', 0.0)):.4f}, "
+                    f"WAPE = {float(overview.get('wape_percent', 0.0)):.2f}%, "
+                    f"MAE = ${float(overview.get('mae', 0.0)):,.0f}."
+                )
+
+                if top_positive_features:
+                    positive_summary = ", ".join(
+                        f"{item['feature']} ({float(item['coefficient']):+.2f})"
+                        for item in top_positive_features
+                    )
+                    lines.append(f"- Traits most associated with higher revenue: {positive_summary}.")
+
+                if top_negative_features:
+                    negative_summary = ", ".join(
+                        f"{item['feature']} ({float(item['coefficient']):+.2f})"
+                        for item in top_negative_features
+                    )
+                    lines.append(f"- Traits associated with lower revenue potential: {negative_summary}.")
+
+                profile_parts: list[str] = []
+                median_budget = float(profile.get("median_budget", 0.0))
+                median_runtime = float(profile.get("median_runtime", 0.0))
+                if median_budget > 0:
+                    profile_parts.append(f"median budget about ${median_budget:,.0f}")
+                if median_runtime > 0:
+                    profile_parts.append(f"median runtime about {median_runtime:.0f} minutes")
+                if profile.get("top_genres"):
+                    profile_parts.append(f"common genres: {', '.join(str(item) for item in profile['top_genres'])}")
+                if profile.get("top_release_windows"):
+                    profile_parts.append(f"common release windows: {', '.join(str(item) for item in profile['top_release_windows'])}")
+                english_share = float(profile.get("english_share_percent", 0.0))
+                us_share = float(profile.get("us_production_share_percent", 0.0))
+                profile_parts.append(f"{english_share:.1f}% are English-language")
+                profile_parts.append(f"{us_share:.1f}% are US productions")
+                lines.append(f"- High-box-office movie profile: {'; '.join(profile_parts)}.")
+                advanced_lines_added = True
+            elif high_box_office_profile and "error" in high_box_office_profile:
+                lines.extend(["", "Machine Learning Box Office Profile", f"- {high_box_office_profile['error']}"])
                 advanced_lines_added = True
 
             if not advanced_lines_added:
@@ -1403,9 +1503,9 @@ class IMDbExplorerApp:
     def _update_chart_status_message(self) -> None:
         if self.chart_choice_var.get() in self.GLOBAL_CHART_KEYS:
             if self.chart_paths.get(self.chart_choice_var.get()) and Path(self.chart_paths[self.chart_choice_var.get()]).exists():
-                self.chart_status_var.set("This yearly forecast chart is fixed to the full cleaned dataset and does not require refreshing.")
+                self.chart_status_var.set("This forecast chart is fixed to the full cleaned dataset and does not require refreshing.")
             else:
-                self.chart_status_var.set("Preparing the fixed yearly forecast chart for the full cleaned dataset.")
+                self.chart_status_var.set("Preparing the fixed forecast chart for the full cleaned dataset.")
             return
 
         if self.chart_generation_in_progress:

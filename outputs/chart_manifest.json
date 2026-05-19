@@ -4,9 +4,10 @@
   "chart_keys": [
     "budget_revenue_scatter",
     "forecast_backtest_yearly_comparison",
+    "forecast_model_backtest_comparison",
     "genre_comparison",
     "genre_distribution",
     "yearly_rating_trend"
   ],
-  "generated_at": "2026-05-17 17:04:11"
+  "generated_at": "2026-05-19 20:22:47"
 }
