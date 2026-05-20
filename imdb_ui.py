@@ -735,13 +735,8 @@ class IMDbExplorerApp:
             else:
                 missing_keys.append(global_chart_key)
 
-        if not missing_keys:
-            return
-
-        chart_paths = create_project_visuals(self.dataset, output_dir=self.output_dir, include_global_forecast=True)
-        for global_chart_key in required_keys:
-            if global_chart_key in chart_paths:
-                self.chart_paths[global_chart_key] = chart_paths[global_chart_key]
+        if missing_keys:
+            self._log_operation("global_chart_generation_deferred", missing_keys=missing_keys)
 
     def _parse_filters(self) -> dict[str, object]:
         filters: dict[str, object] = {}
@@ -916,7 +911,6 @@ class IMDbExplorerApp:
             refresh_current=refresh_current,
         )
 
-        started_at = perf_counter()
         if cache_key in self.analysis_cache:
             analysis_result = self.analysis_cache[cache_key]
             self._log_operation(
@@ -928,20 +922,33 @@ class IMDbExplorerApp:
             )
             self._apply_analysis_result(request_id, analysis_result, cache_key)
             return
+        worker = threading.Thread(
+            target=self._analysis_worker,
+            args=(request_id, filters, cache_key),
+            daemon=True,
+        )
+        worker.start()
 
+    def _analysis_worker(
+        self,
+        request_id: int,
+        filters: dict[str, object],
+        cache_key: tuple[tuple[str, object], ...],
+    ) -> None:
+        started_at = perf_counter()
         try:
             analysis_result = analyze(self.dataset, filters)
         except Exception as exc:  # pragma: no cover - defensive UI path
-            self._handle_background_error("Analysis failed", str(exc))
+            self.root.after(0, self._handle_background_error, "Analysis failed", str(exc))
             return
         self._log_operation(
             "analysis_worker_completed",
             request_id=request_id,
             duration_ms=round((perf_counter() - started_at) * 1000, 2),
             rows=int(len(analysis_result["filtered_df"])),
-            execution="sync",
+            execution="thread",
         )
-        self._apply_analysis_result(request_id, analysis_result, cache_key)
+        self.root.after(0, self._apply_analysis_result, request_id, analysis_result, cache_key)
 
     def _apply_analysis_result(
         self,
@@ -1178,7 +1185,7 @@ class IMDbExplorerApp:
             cached = self._sort_dataframe(self.current_results).reset_index(drop=True)
             self.sorted_results_cache[cache_key] = cached
         self.current_sorted_results = cached
-        self.current_display_rows = self._build_display_rows(self.current_sorted_results)
+        self.current_display_rows = []
         self.total_pages = max(1, math.ceil(len(self.current_sorted_results) / self.PAGE_SIZE))
         self.current_page = min(self.current_page, self.total_pages - 1)
         self._update_results_headings()
@@ -1295,7 +1302,7 @@ class IMDbExplorerApp:
 
         start = self.current_page * self.PAGE_SIZE
         end = min(start + self.PAGE_SIZE, total_rows)
-        page_rows = self.current_display_rows[start:end]
+        page_rows = self._build_display_rows(self.current_sorted_results.iloc[start:end])
 
         for display_index, values in enumerate(page_rows):
             item_id = self.results_row_items[display_index]
